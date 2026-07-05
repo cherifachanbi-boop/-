@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>سُبحة الورد — متابعة ختمة الأسبوع</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0F3B39">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F3B39;
+    --ink-2:#134641;
+    --ink-3:#0B2E2C;
+    --gold:#C9A24B;
+    --gold-light:#E7CB84;
+    --parchment:#F7F0DF;
+    --parchment-dim:#EFE6CE;
+    --sage:#6E9370;
+    --sage-dim:#DDE9DC;
+    --rust:#B5533C;
+    --rust-dim:#F1DAD2;
+    --amber-dim:#F3E3C4;
+    --muted:#A9C0BA;
+    --text-dark:#1D2C29;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--ink); min-height:100%;}
+  body{
+    font-family:'Tajawal', sans-serif;
+    color:var(--parchment);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:60px;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(201,162,75,0.07), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(201,162,75,0.06), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .wrap{max-width:560px; margin:0 auto; padding:28px 18px 0; position:relative; z-index:1;}
+
+  header{text-align:center; margin-bottom:22px;}
+  .eyebrow{
+    font-size:12px; letter-spacing:2px; color:var(--gold-light);
+    text-transform:uppercase; font-weight:700; opacity:.85;
+  }
+  h1{
+    font-family:'Amiri', serif; font-weight:700; font-size:32px;
+    color:var(--parchment); margin:6px 0 4px; line-height:1.3;
+  }
+  .subtitle{font-size:13.5px; color:var(--muted); font-weight:400;}
+  .week-range{
+    display:inline-block; margin-top:12px; padding:6px 16px;
+    border:1px solid rgba(201,162,75,0.4); border-radius:999px;
+    font-size:12.5px; color:var(--gold-light); font-weight:500;
+  }
+
+  .thread-card{
+    margin:26px 0 30px; padding:22px 14px 16px;
+    background:linear-gradient(180deg, var(--ink-2), var(--ink-3));
+    border-radius:20px; border:1px solid rgba(201,162,75,0.18);
+    position:relative;
+  }
+  .thread{
+    display:flex; justify-content:space-between; align-items:center;
+    position:relative; padding:0 6px;
+  }
+  .thread::before{
+    content:"";
+    position:absolute; top:50%; right:6px; left:6px; height:2px;
+    background:repeating-linear-gradient(90deg, rgba(201,162,75,0.35) 0 4px, transparent 4px 8px);
+    transform:translateY(-1px); z-index:0;
+  }
+  .bead{
+    width:26px; height:26px; border-radius:50%;
+    background:var(--ink-3); border:2px solid var(--muted);
+    position:relative; z-index:1; flex-shrink:0;
+    transition:all .25s ease;
+  }
+  .bead.done{background:var(--gold); border-color:var(--gold-light); box-shadow:0 0 10px rgba(201,162,75,0.55);}
+  .bead.missed{background:transparent; border-color:var(--rust); border-style:dashed;}
+  .bead.today{outline:2px solid var(--parchment); outline-offset:2px;}
+  .bead.pendant{width:32px; height:32px; border-radius:8px; transform:rotate(45deg);}
+  .bead.pendant.done{background:var(--gold);}
+  .thread-caption{
+    text-align:center; font-size:11.5px; color:var(--muted);
+    margin-top:14px; letter-spacing:.3px;
+  }
+
+  .day-card{
+    background:var(--parchment); color:var(--text-dark);
+    border-radius:16px; padding:16px 18px; margin-bottom:12px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.18);
+    border-right:5px solid var(--muted);
+    transition:border-color .2s ease;
+  }
+  .day-card.done{border-right-color:var(--sage);}
+  .day-card.missed{border-right-color:var(--rust); opacity:.92;}
+  .day-card.progress{border-right-color:var(--gold);}
+  .day-card.future{opacity:.6;}
+  .day-card.today{box-shadow:0 6px 16px rgba(0,0,0,0.18), 0 0 0 2px rgba(201,162,75,0.4);}
+
+  .day-header{display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer;}
+  .day-info{flex:1; min-width:0;}
+  .day-name-row{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;}
+  .day-name{font-family:'Amiri', serif; font-weight:700; font-size:18px;}
+  .day-date{font-size:11.5px; color:#5C6E68; margin-top:2px;}
+  .badge{
+    font-size:10.5px; padding:2px 9px; border-radius:999px; font-weight:700;
+    background:var(--sage-dim); color:#2F4A32;
+  }
+  .badge.missed{background:var(--rust-dim); color:#7A2E1D;}
+  .badge.progress{background:var(--amber-dim); color:#7A5A1E;}
+  .badge.future{background:#E7E7E2; color:#5C6E68;}
+  .chev{font-size:13px; color:#5C6E68; transition:transform .2s ease; flex-shrink:0;}
+  .chev.open{transform:rotate(180deg);}
+
+  .progress-mini-bar{height:6px; border-radius:999px; background:rgba(0,0,0,0.08); overflow:hidden; margin-top:8px;}
+  .progress-mini-fill{height:100%; border-radius:999px; transition:width .3s ease;}
+
+  .day-body{display:none; margin-top:14px;}
+  .day-body.open{display:block;}
+  .surah-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .chip{
+    font-size:12px; padding:5px 10px; border-radius:999px; border:1px solid #D9CDA6;
+    background:var(--parchment-dim); color:#3B4A45; cursor:pointer; user-select:none;
+    transition:all .15s ease; display:flex; align-items:center; gap:5px; line-height:1.5;
+  }
+  .chip.read{background:var(--sage); color:#fff; border-color:var(--sage);}
+  .chip .num{font-size:9.5px; opacity:.65;}
+
+  .day-meta{
+    font-size:12.5px; color:#4B5C56; background:rgba(0,0,0,0.045); border-radius:10px;
+    padding:10px 12px; line-height:1.8;
+  }
+  .day-meta b{color:var(--text-dark);}
+  .day-meta .row{margin-top:4px;}
+  .day-meta .row:first-child{margin-top:0;}
+
+  .day-quick-actions{display:flex; gap:8px; margin-top:10px;}
+  .quick-btn{
+    font-size:11.5px; border:none; border-radius:999px; padding:6px 14px; cursor:pointer;
+    background:#E4DBC0; color:#3B4A45; font-family:'Tajawal'; font-weight:600;
+  }
+  .quick-btn:active{transform:scale(0.96);}
+
+  .friday-card{
+    background:linear-gradient(135deg, var(--gold), #B08A3E);
+    color:var(--ink-3); border-radius:16px; padding:16px 18px; margin:16px 0 6px;
+    text-align:center; box-shadow:0 6px 16px rgba(0,0,0,0.22);
+  }
+  .friday-card h3{font-family:'Amiri', serif; font-size:19px; margin-bottom:4px;}
+  .friday-card p{font-size:13px; margin-bottom:12px; opacity:.9;}
+  .friday-btn{
+    border:none; border-radius:999px; padding:9px 22px; font-family:'Tajawal';
+    font-weight:700; font-size:13.5px; cursor:pointer; background:var(--ink-3); color:var(--gold-light);
+    transition:transform .15s ease;
+  }
+  .friday-btn:active{transform:scale(0.95);}
+
+  .section-title{
+    font-family:'Amiri', serif; font-size:20px; margin:34px 0 14px;
+    display:flex; align-items:center; gap:10px; color:var(--parchment);
+  }
+  .section-title::after{content:""; flex:1; height:1px; background:rgba(201,162,75,0.3);}
+
+  .stats-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+  .stat-card{
+    background:var(--ink-2); border:1px solid rgba(201,162,75,0.18);
+    border-radius:14px; padding:14px 14px; text-align:center;
+  }
+  .stat-num{font-family:'Amiri', serif; font-size:26px; font-weight:700; color:var(--gold-light);}
+  .stat-label{font-size:11.5px; color:var(--muted); margin-top:2px;}
+  .progress-card{
+    background:var(--ink-2); border:1px solid rgba(201,162,75,0.18);
+    border-radius:14px; padding:16px 16px; margin-bottom:14px;
+  }
+  .progress-head{display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px;}
+  .progress-bar-bg{height:10px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden;}
+  .progress-bar-fill{height:100%; background:linear-gradient(90deg, var(--sage), var(--gold)); border-radius:999px; transition:width .4s ease;}
+
+  .empty-note{font-size:12.5px; color:var(--muted); text-align:center; padding:10px 0 4px;}
+  footer{text-align:center; margin-top:38px; font-size:11.5px; color:var(--muted); line-height:1.9;}
+  footer .reset{
+    margin-top:14px; background:none; border:1px solid rgba(255,255,255,0.15);
+    color:var(--muted); padding:7px 16px; border-radius:999px; font-family:'Tajawal';
+    font-size:11.5px; cursor:pointer;
+  }
+  .loading{text-align:center; padding:60px 0; color:var(--muted); font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="loading" id="loading">...جارِ التحميل</div>
+</div>
+
+<script>
+const STORAGE_KEY = "khatma-records-v2";
+const PACE_AYAT_PER_MIN = 10; // معدل تقديري لسرعة القراءة المتوسطة
+
+const SURAHS = [
+  {num:18,name:"الكهف",verses:110},{num:19,name:"مريم",verses:98},{num:20,name:"طه",verses:135},
+  {num:21,name:"الأنبياء",verses:112},{num:22,name:"الحج",verses:78},{num:23,name:"المؤمنون",verses:118},
+  {num:24,name:"النور",verses:64},{num:25,name:"الفرقان",verses:77},{num:26,name:"الشعراء",verses:227},
+  {num:27,name:"النمل",verses:93},{num:28,name:"القصص",verses:88},{num:29,name:"العنكبوت",verses:69},
+  {num:30,name:"الروم",verses:60},{num:31,name:"لقمان",verses:34},{num:32,name:"السجدة",verses:30},
+  {num:33,name:"الأحزاب",verses:73},{num:34,name:"سبأ",verses:54},{num:35,name:"فاطر",verses:45},
+  {num:36,name:"يس",verses:83},{num:37,name:"الصافات",verses:182},{num:38,name:"ص",verses:88},
+  {num:39,name:"الزمر",verses:75},{num:40,name:"غافر",verses:85},{num:41,name:"فصلت",verses:54},
+  {num:42,name:"الشورى",verses:53},{num:43,name:"الزخرف",verses:89},{num:44,name:"الدخان",verses:59},
+  {num:45,name:"الجاثية",verses:37},{num:46,name:"الأحقاف",verses:35},{num:47,name:"محمد",verses:38},
+  {num:48,name:"الفتح",verses:29},{num:49,name:"الحجرات",verses:18},{num:50,name:"ق",verses:45},
+  {num:51,name:"الذاريات",verses:60},{num:52,name:"الطور",verses:49},{num:53,name:"النجم",verses:62},
+  {num:54,name:"القمر",verses:55},{num:55,name:"الرحمن",verses:78},{num:56,name:"الواقعة",verses:96},
+  {num:57,name:"الحديد",verses:29},{num:58,name:"المجادلة",verses:22},{num:59,name:"الحشر",verses:24},
+  {num:60,name:"الممتحنة",verses:13},{num:61,name:"الصف",verses:14},{num:62,name:"الجمعة",verses:11},
+  {num:63,name:"المنافقون",verses:11},{num:64,name:"التغابن",verses:18},{num:65,name:"الطلاق",verses:12},
+  {num:66,name:"التحريم",verses:12},{num:67,name:"الملك",verses:30},{num:68,name:"القلم",verses:52},
+  {num:69,name:"الحاقة",verses:52},{num:70,name:"المعارج",verses:44},{num:71,name:"نوح",verses:28},
+  {num:72,name:"الجن",verses:28},{num:73,name:"المزمل",verses:20},{num:74,name:"المدثر",verses:56},
+  {num:75,name:"القيامة",verses:40},{num:76,name:"الإنسان",verses:31},{num:77,name:"المرسلات",verses:50},
+  {num:78,name:"النبأ",verses:40},{num:79,name:"النازعات",verses:46},{num:80,name:"عبس",verses:42},
+  {num:81,name:"التكوير",verses:29},{num:82,name:"الإنفطار",verses:19},{num:83,name:"المطففين",verses:36},
+  {num:84,name:"الإنشقاق",verses:25},{num:85,name:"البروج",verses:22},{num:86,name:"الطارق",verses:17},
+  {num:87,name:"الأعلى",verses:19},{num:88,name:"الغاشية",verses:26},{num:89,name:"الفجر",verses:30},
+  {num:90,name:"البلد",verses:20},{num:91,name:"الشمس",verses:15},{num:92,name:"الليل",verses:21},
+  {num:93,name:"الضحى",verses:11},{num:94,name:"الشرح",verses:8},{num:95,name:"التين",verses:8},
+  {num:96,name:"العلق",verses:19},{num:97,name:"القدر",verses:5},{num:98,name:"البينة",verses:8},
+  {num:99,name:"الزلزلة",verses:8},{num:100,name:"العاديات",verses:11},{num:101,name:"القارعة",verses:11},
+  {num:102,name:"التكاثر",verses:8},{num:103,name:"العصر",verses:3},{num:104,name:"الهمزة",verses:9},
+  {num:105,name:"الفيل",verses:5},{num:106,name:"قريش",verses:4},{num:107,name:"الماعون",verses:7},
+  {num:108,name:"الكوثر",verses:3},{num:109,name:"الكافرون",verses:6},{num:110,name:"النصر",verses:3},
+  {num:111,name:"المسد",verses:5},{num:112,name:"الإخلاص",verses:4},{num:113,name:"الفلق",verses:5},
+  {num:114,name:"الناس",verses:6}
+];
+
+const SCHEDULE = {
+  6: { order:1, name:"السبت",    start:18,  end:22  },
+  0: { order:2, name:"الأحد",    start:23,  end:28  },
+  1: { order:3, name:"الإثنين",  start:29,  end:36  },
+  2: { order:4, name:"الثلاثاء", start:37,  end:43  },
+  3: { order:5, name:"الأربعاء", start:44,  end:58  },
+  4: { order:6, name:"الخميس",   start:59,  end:114 },
+};
+
+const ARABIC_MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+function fmtDate(d){ return `${d.getDate()} ${ARABIC_MONTHS[d.getMonth()]}`; }
+function toKey(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+function getDaySurahs(dow){
+  const sch = SCHEDULE[dow];
+  if(!sch) return [];
+  return SURAHS.filter(s => s.num >= sch.start && s.num <= sch.end);
+}
+function estimateMinutes(list){
+  const totalVerses = list.reduce((a,s)=>a+s.verses,0);
+  return Math.ceil(totalVerses / PACE_AYAT_PER_MIN);
+}
+function formatMinutes(mins){
+  if(mins<=0) return "0 دقيقة";
+  if(mins<60) return `${mins} دقيقة`;
+  const h = Math.floor(mins/60), m = mins%60;
+  return `${h} ساعة${m ? ' و'+m+' دقيقة' : ''}`;
+}
+
+function getWeekDates(ref){
+  const day = ref.getDay();
+  const diffToSat = (day - 6 + 7) % 7;
+  const sat = new Date(ref);
+  sat.setDate(ref.getDate() - diffToSat);
+  const dates = [];
+  for(let i=0;i<7;i++){
+    const d = new Date(sat);
+    d.setDate(sat.getDate()+i);
+    dates.push(d);
+  }
+  return dates; // [Sat, Sun, Mon, Tue, Wed, Thu, Fri]
+}
+
+// storage adapter: uses Claude artifact storage when available, else real browser localStorage
+const Store = {
+  async get(key){
+    try{
+      if(typeof window!=="undefined" && window.storage && typeof window.storage.get==="function"){
+        const res = await window.storage.get(key, false);
+        return res ? res.value : null;
+      }
+    }catch(e){}
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
+  },
+  async set(key, value){
+    try{
+      if(typeof window!=="undefined" && window.storage && typeof window.storage.set==="function"){
+        await window.storage.set(key, value, false);
+        return true;
+      }
+    }catch(e){}
+    try{ localStorage.setItem(key, value); return true; }catch(e){ return false; }
+  }
+};
+
+let records = {};       // dateKey -> { surahNum: true }
+let fridayRecords = {}; // dateKey -> true
+let openDays = new Set();
+const today = startOfDay(new Date());
+const weekDates = getWeekDates(today);
+const readingDates = weekDates.slice(0,6);
+const fridayDate = weekDates[6];
+openDays.add(toKey(today));
+
+async function loadData(){
+  try{
+    const raw = await Store.get(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      records = parsed.records || {};
+      fridayRecords = parsed.fridayRecords || {};
+    }
+  }catch(e){ records = {}; fridayRecords = {}; }
+}
+async function saveData(){
+  try{ await Store.set(STORAGE_KEY, JSON.stringify({records, fridayRecords})); }
+  catch(e){ console.error("تعذّر حفظ البيانات", e); }
+}
+
+function dayCompletionInfo(d){
+  const dow = d.getDay();
+  const list = getDaySurahs(dow);
+  const key = toKey(d);
+  const rec = records[key] || {};
+  const doneList = list.filter(s => rec[s.num]);
+  const remaining = list.filter(s => !rec[s.num]);
+  const allDone = list.length>0 && remaining.length===0;
+  const tKey = toKey(today);
+  let status;
+  if(allDone) status = "done";
+  else if(key < tKey) status = "missed";
+  else if(key === tKey) status = "progress";
+  else status = "future";
+  return { list, doneList, remaining, allDone, status };
+}
+
+function toggleSurah(key, num){
+  if(!records[key]) records[key] = {};
+  records[key][num] = !records[key][num];
+  saveData();
+  render();
+}
+function markAllDay(key, dow, value){
+  const list = getDaySurahs(dow);
+  if(!records[key]) records[key] = {};
+  list.forEach(s => { records[key][s.num] = value; });
+  saveData();
+  render();
+}
+function toggleOpen(key){
+  if(openDays.has(key)) openDays.delete(key);
+  else openDays.add(key);
+  render();
+}
+function toggleFriday(dateObj){
+  const key = toKey(dateObj);
+  fridayRecords[key] = !fridayRecords[key];
+  saveData();
+  render();
+}
+
+function getTrackedDateRange(){
+  const keys = Object.keys(records);
+  if(keys.length===0) return null;
+  const sorted = keys.slice().sort();
+  return { minKey: sorted[0] };
+}
+function allReadingDatesFromRecords(){
+  const range = getTrackedDateRange();
+  if(!range) return [];
+  const dates = [];
+  let d = new Date(range.minKey + "T00:00:00");
+  const tKey = toKey(today);
+  while(toKey(d) <= tKey){
+    if(d.getDay() !== 5) dates.push(new Date(d));
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
+function countKhatmas(){
+  const range = getTrackedDateRange();
+  if(!range) return 0;
+  let d = getWeekDates(new Date(range.minKey + "T00:00:00"))[0];
+  const lastSat = getWeekDates(today)[0];
+  let count = 0;
+  while(toKey(d) <= toKey(lastSat)){
+    const wDates = getWeekDates(d).slice(0,6);
+    if(wDates.every(x => dayCompletionInfo(x).allDone)) count++;
+    d.setDate(d.getDate()+7);
+  }
+  return count;
+}
+
+function computeStats(){
+  const dates = allReadingDatesFromRecords();
+  const seq = [];
+  let doneCount=0, missedCount=0;
+  const tKey = toKey(today);
+  for(const d of dates){
+    const info = dayCompletionInfo(d);
+    const key = toKey(d);
+    seq.push({key, done:info.allDone});
+    if(info.allDone) doneCount++;
+    else if(key < tKey) missedCount++;
+  }
+  const total = doneCount + missedCount;
+  const pct = total ? Math.round((doneCount/total)*100) : 0;
+
+  let bestStreak=0, run=0;
+  for(const s of seq){ if(s.done){ run++; bestStreak=Math.max(bestStreak,run); } else run=0; }
+
+  let idx = seq.length-1;
+  if(idx>=0 && !seq[idx].done && seq[idx].key===tKey) idx--;
+  let currentStreak=0;
+  for(; idx>=0; idx--){ if(seq[idx].done) currentStreak++; else break; }
+
+  const khatmas = countKhatmas();
+  const fridayCount = Object.values(fridayRecords).filter(Boolean).length;
+
+  return { doneCount, missedCount, total, pct, currentStreak, bestStreak, khatmas, fridayCount };
+}
+
+function renderThread(){
+  const items = weekDates.map((d, idx) => {
+    const isFriday = idx === 6;
+    let cls = "bead";
+    if(isFriday) cls += " pendant";
+    const key = toKey(d);
+    if(isFriday){
+      if(fridayRecords[key]) cls += " done";
+    } else {
+      const info = dayCompletionInfo(d);
+      if(info.status==="done") cls += " done";
+      else if(info.status==="missed") cls += " missed";
+    }
+    if(key === toKey(today)) cls += " today";
+    return `<div class="${cls}" title="${isFriday ? 'الجمعة' : SCHEDULE[d.getDay()].name}"></div>`;
+  }).join("");
+  return `
+    <div class="thread-card">
+      <div class="thread">${items}</div>
+      <div class="thread-caption">سُبحة الأسبوع — من السبت إلى الجمعة</div>
+    </div>`;
+}
+
+function renderDayCard(d){
+  const dow = d.getDay();
+  const sch = SCHEDULE[dow];
+  const key = toKey(d);
+  const info = dayCompletionInfo(d);
+  const isToday = key === toKey(today);
+  const isOpen = openDays.has(key);
+
+  let cardClass = `day-card ${info.status}`;
+  if(isToday) cardClass += " today";
+
+  const badgeMap = {
+    done: '<span class="badge">مكتمل ✓</span>',
+    missed: '<span class="badge missed">لم يكتمل</span>',
+    progress: '<span class="badge progress">قيد التقدّم</span>',
+    future: '<span class="badge future">قادم</span>',
+  };
+  const barColor = { done:"var(--sage)", missed:"var(--rust)", progress:"var(--gold)", future:"var(--muted)" }[info.status];
+  const pct = info.list.length ? Math.round((info.doneList.length/info.list.length)*100) : 0;
+
+  const chips = info.list.map(s=>{
+    const read = !!(records[key] && records[key][s.num]);
+    return `<div class="chip ${read?'read':''}" onclick="toggleSurah('${key}', ${s.num})">
+      <span>${s.name}</span><span class="num">${s.num}</span>
+    </div>`;
+  }).join("");
+
+  const metaBlock = info.allDone ? "" : `
+    <div class="day-meta">
+      <div class="row">📖 <b>متبقٍ ${info.remaining.length} من ${info.list.length} سورة:</b> ${info.remaining.map(s=>s.name).join('، ')}</div>
+      <div class="row">⏱️ <b>الوقت التقريبي لإكمال الباقي:</b> ${formatMinutes(estimateMinutes(info.remaining))}</div>
+    </div>`;
+
+  return `
+    <div class="${cardClass}">
+      <div class="day-header" onclick="toggleOpen('${key}')">
+        <div class="day-info">
+          <div class="day-name-row">
+            <span class="day-name">اليوم ${sch.order} — ${sch.name}</span>
+            ${badgeMap[info.status]}
+          </div>
+          <div class="day-date">${fmtDate(d)} · ${info.doneList.length}/${info.list.length} سورة</div>
+          <div class="progress-mini-bar"><div class="progress-mini-fill" style="width:${pct}%; background:${barColor}"></div></div>
+        </div>
+        <span class="chev ${isOpen?'open':''}">▾</span>
+      </div>
+      <div class="day-body ${isOpen?'open':''}">
+        <div class="surah-chips">${chips}</div>
+        ${metaBlock}
+        <div class="day-quick-actions">
+          <button class="quick-btn" onclick="markAllDay('${key}', ${dow}, true)">تحديد الكل تم</button>
+          <button class="quick-btn" onclick="markAllDay('${key}', ${dow}, false)">إعادة الضبط</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderFridayCard(){
+  const key = toKey(fridayDate);
+  const active = !!fridayRecords[key];
+  return `
+    <div class="friday-card">
+      <h3>الجمعة</h3>
+      <p>يوم مخصّص للصلاة على النبي ﷺ، بلا ورد قراءة</p>
+      <button class="friday-btn" onclick="toggleFriday(new Date(${fridayDate.getFullYear()},${fridayDate.getMonth()},${fridayDate.getDate()}))">
+        ${active ? '✓ صلّيت على النبي ﷺ' : 'تسجيل الصلاة على النبي ﷺ'}
+      </button>
+    </div>`;
+}
+
+function renderStats(){
+  const s = computeStats();
+  return `
+    <div class="section-title">الإحصائيات</div>
+    <div class="progress-card">
+      <div class="progress-head">
+        <span>نسبة الإنجاز الكلية</span>
+        <span>${s.pct}%</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${s.pct}%"></div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">${s.doneCount}</div><div class="stat-label">أيام إنجاز</div></div>
+      <div class="stat-card"><div class="stat-num">${s.missedCount}</div><div class="stat-label">أيام غياب</div></div>
+      <div class="stat-card"><div class="stat-num">${s.currentStreak}</div><div class="stat-label">التتابع الحالي</div></div>
+      <div class="stat-card"><div class="stat-num">${s.bestStreak}</div><div class="stat-label">أفضل تتابع</div></div>
+      <div class="stat-card"><div class="stat-num">${s.khatmas}</div><div class="stat-label">ختمات كاملة</div></div>
+      <div class="stat-card"><div class="stat-num">${s.fridayCount}</div><div class="stat-label">جُمَع بالصلاة على النبي ﷺ</div></div>
+    </div>
+    ${s.total===0 ? '<div class="empty-note">لم تُسجَّل أي بيانات بعد — ابدأ بتحديد سور يومك الأول</div>' : ''}
+    <div class="empty-note">* الوقت التقريبي محسوب على معدل قراءة تقديري (${PACE_AYAT_PER_MIN} آيات/دقيقة) وقد يختلف حسب سرعتك</div>
+  `;
+}
+
+async function resetAll(){
+  if(!confirm("سيتم حذف جميع سجلات المتابعة نهائيًا. هل أنت متأكد؟")) return;
+  records = {}; fridayRecords = {};
+  await saveData();
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+  const rangeStr = `${fmtDate(weekDates[0])} — ${fmtDate(weekDates[5])}`;
+  app.innerHTML = `
+    <header>
+      <div class="eyebrow">ختمة كاملة كل أسبوع</div>
+      <h1>سُبحة الورد</h1>
+      <div class="subtitle">من الكهف إلى الناس — سِتّ ليالٍ وجُمعة للصلاة على الحبيب ﷺ</div>
+      <div class="week-range">${rangeStr}</div>
+    </header>
+
+    ${renderThread()}
+
+    <div class="section-title">وِرد الأسبوع</div>
+    ${readingDates.map(renderDayCard).join("")}
+    ${renderFridayCard()}
+
+    ${renderStats()}
+
+    <footer>
+      كل سجل يُحفظ محليًا في هذا التطبيق فقط
+      <br>
+      <button class="reset" onclick="resetAll()">إعادة ضبط كل البيانات</button>
+    </footer>
+  `;
+}
+
+(async function init(){
+  await loadData();
+  render();
+})();
+
+if(typeof navigator!=="undefined" && 'serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
